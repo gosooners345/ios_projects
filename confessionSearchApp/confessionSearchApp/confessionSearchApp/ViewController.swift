@@ -7,6 +7,8 @@
 //
 
 import UIKit
+//Testing for CocoaPods Support for MAC Lab
+import SQLite
 import SQLite3
 
 
@@ -93,15 +95,48 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
 
     var documentList: [Document] = [Document]() //Document List
     
-    
     var db: OpaquePointer? //DB Pointer
+    //Document Type Spinner List/Array Adapter 
     var pickerData: [String] = [String]()
+    //Document Title Spinner List Adapter
     var documentNameData: [String] = [String]()
+    //Test code
     var documentTypeList : [DocumentType] = [DocumentType]()
     var documentTitleList : [DocumentTitle] = [DocumentTitle]()
+    
     var topic: String = ""
     var chNumber:Int = 0
     var searchType: [String] = [String]()
+    
+    //Cocoa Pods Test code
+    let path = Bundle.main.pathForResource("confessionSearchDB.db", ofType: "sqlite3")!
+    let cocoDB= try Connection(path, readonly: true)
+   //Document Type Table
+    let docTypes = Table("DocumentType")
+    let documentTypetypeid = Expression<Int64>("DocumentTypeID")
+    let documentTypeName = Expression<String?>("DocumentTypeName")
+   //Document Type Array storage
+    let docTypeArray = Array(try cocoDB.prepare(docTypes))
+     // docTypes.column(documentTypetypeID, primaryKey: true)
+   // docTypes.column(documentTypeName, unique: true)
+   //Document Name Table
+    let documentNameTable = Table("DocumentTitle")
+    let documentTitleTypeID = Expression<Int>("DocumentTypeID")
+    let documentNameID = Expression<Int64>("DocumentID")
+    let documentName = Expression<String?>("DocumentName")
+    //Document Name Array Storage
+      let docNameArray = Array(try cocoDB.prepare(documentNameTable))
+   //Document Table 
+    let documentTable = Table("Document")
+    let DocumentID = Expression<Int64>("DocumentID")
+    let DocumentDetailID = Expression<Int64>("DocDetailID")
+    let ChapterNum = Expression<Int64>("DocIndexNum")
+    let ChapterName = Expression<String?>("ChName")
+    let ChapterText = Expression<String?>("ChText")
+    let ChapterProofs = Expression<String?>("ChProofs")
+    let ChapterTags = Expression<String?>("ChTags")    
+    //let ChMatches = Expression<Int64>("ChMatches")
+     
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -109,10 +144,10 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
         //Borrowed from simplifiedIOS Swift SQLite Tutorial with modifications on which files are used.
         //Load the DB pointer
         //DB Pointer For retrieving data from Database
-        let fileURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("confessionSearchDB.db")
-        if sqlite3_open(fileURL.path,&db) != SQLITE_OK{print("Error Opening DB")}
-       readDocumentTypes()
-        
+       // let fileURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("confessionSearchDB.db")
+      //  if sqlite3_open(fileURL.path,&db) != SQLITE_OK{print("Error Opening DB")}
+      // readDocumentTypes()
+        testLoadDocTypes()
         
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -123,14 +158,38 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
         // Dispose of any resources that can be recreated.
     }
     @IBAction func searchButton(_ sender: UIButton) {
-        
+     
         
         
     }
     @IBOutlet weak var searchTypePicker: UIPickerView!
 
+    func testLoadDocTypes()
+    {
+         pickerData.append("All")
+       
+       //Getting the text needed for the Spinner object
+        
+       for docType in try cocoDB.prepare(docTypes.select(documentTypeName))
+        {
+            pickerData.append(documentTypeName)
+        } 
+        
+       for docName in try cocoDB.prepare(documentNameTable.select(documentName)
+{
+    documentNameData.append(docName)
+}
+        
+        
+    }
+    func typeSelected(varName : String) 
+    {
+        
+
+    }
     func readDocumentTypes()
     {
+        /*
         documentList.removeAll()
         let queryString = "SELECT * from DocumentType"
         var stmt:OpaquePointer?
@@ -159,7 +218,7 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
             documentNameData.append(documentTitle)
         }
         
-        
+        */
 }
     
 }
